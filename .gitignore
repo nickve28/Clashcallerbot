@@ -1,0 +1,4 @@
+config/*
+*.swp
+persist/
+node_modules
