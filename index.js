@@ -26,15 +26,11 @@ rtm.on('message', (message) => {
     rtm.sendMessage(`The current war link is ${clashcaller.getUrl()}`, message.channel)
   } else if (txt.match(/give me the top (\d+) donation ratio/)) {
     var num = txt.match(/\d+/)[0]
-    rtm.sendMessage('DEBUG: DONATION RESULTS CALLED', message.channel)
-    rtm.sendMessage(`registered value ${num} regex`, message.channel)
     donations.getDonations({limit: num, order: 'desc'}, (err, res) => {
       if (err) {
         rtm.sendMessage(`Oh no chief! I got an error: ${err}`, message.channel)
       } else {
-        res.forEach((player) => {
-          rtm.sendMessage(player, message.channel)
-        })
+        rtm.sendMessage(res.join('\n'), message.channel)
       }
     })
   } else if (txt.indexOf('fgt') > -1) {
