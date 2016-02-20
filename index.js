@@ -2,6 +2,7 @@ var config = require('config'),
     RtmClient = require('slack-client').RtmClient,
     clashcaller = require('./clashcaller')
     messageMap = require('./message-map'),
+    donations = require('./donationstats'),
     token = config.get('token')
 
 var rtm = new RtmClient(token, {logLevel: 'DEBUG'})
@@ -23,6 +24,19 @@ rtm.on('message', (message) => {
     clashcaller.saveUrl(txt)
   } else if (txt.indexOf('give me the war link') > -1) {
     rtm.sendMessage(`The current war link is ${clashcaller.getUrl()}`, message.channel)
+  } else if (txt.match(/give me the top (\d+) donation ratio/)) {
+    var num = txt.match(/\d+/)[0]
+    rtm.sendMessage('DEBUG: DONATION RESULTS CALLED', message.channel)
+    rtm.sendMessage(`registered value ${num} regex`, message.channel)
+    donations.getDonations({limit: num, order: 'desc'}, (err, res) => {
+      if (err) {
+        rtm.sendMessage(`Oh no chief! I got an error: ${err}`, message.channel)
+      } else {
+        res.forEach((player) => {
+          rtm.sendMessage(player, message.channel)
+        })
+      }
+    })
   } else if (txt.indexOf('fgt') > -1) {
     rtm.sendMessage('bruh', message.channel)
   } else if (txt.indexOf('dizzy') > -1) {
