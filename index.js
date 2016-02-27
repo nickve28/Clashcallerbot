@@ -3,6 +3,7 @@ var config = require('config'),
     clashcaller = require('./clashcaller')
     messageMap = require('./message-map'),
     donations = require('./donationstats'),
+    banlist = require('./war-penalties.js'),
     token = config.get('token')
 
 var rtm = new RtmClient(token, {logLevel: 'DEBUG'})
@@ -37,6 +38,28 @@ rtm.on('message', (message) => {
     rtm.sendMessage('bruh', message.channel)
   } else if (txt.indexOf('dizzy') > -1) {
     rtm.sendMessage('That\'s me! best playa in the world!', message.channel)
+  } else if (txt === '!banlist') {
+    banlist.getPenalties( (err, players) => {
+      if (err) {
+        rtm.sendMessage(`Oh no chief! I've got an error: ${err}`, message.channel);
+        return;
+      }
+      var playersOverview = players.map( (player) => {
+        return `Player ${player.name} has been banned until ${player.until} for reason: ${player.reason}`
+      })
+      rtm.sendMessage(`War banlist:\n ${playersOverview.join('\n')}`, message.channel);
+    })
+  } else if (txt.match(/^!ban/)) {
+    //just a draft for now
+    var split = txt.split(';')
+    if (split.length < 4) return;
+
+    var player = split[1].trim()
+    var reason = split[2].trim()
+    var until = split[3].trim().toUpperCase()
+    var payload = {player: player, reason: reason, until: until}
+    banlist.ban(payload)
+    rtm.sendMessage(`Banned ${player}, for reason: ${reason}`, message.channel)
   } else {
     //direct message mapping
     if (messageMap[txt]) rtm.sendMessage(messageMap[txt], message.channel)

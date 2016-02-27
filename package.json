@@ -12,6 +12,7 @@
     "config": "^1.19.0",
     "node-persist": "0.0.8",
     "request": "^2.69.0",
-    "slack-client": "^2.0.0"
+    "slack-client": "^2.0.0",
+    "sqlite3": "^3.1.1"
   }
 }

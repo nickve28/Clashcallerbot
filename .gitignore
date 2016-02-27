@@ -2,3 +2,4 @@ config/*
 *.swp
 persist/
 node_modules
+data
