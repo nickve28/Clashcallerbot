@@ -4,7 +4,8 @@ var config = require('config'),
     messageMap = require('./message-map'),
     donations = require('./donationstats'),
     banlist = require('./war-penalties.js'),
-    token = config.get('token')
+    token = config.get('token'),
+    remindUs = require('./warreminder.js')
 
 var rtm = new RtmClient(token, {logLevel: 'DEBUG'})
 rtm.start()
@@ -49,6 +50,9 @@ rtm.on('message', (message) => {
       })
       rtm.sendMessage(`War banlist:\n ${playersOverview.join('\n')}`, message.channel);
     })
+  } else if (txt.match(/^remind us to start wars/)) {
+    rtm.sendMessage('yeah I will', message.channel)
+    remindUs(rtm)
   } else if (txt.match(/^!ban/)) {
     //just a draft for now
     var split = txt.split(';')
