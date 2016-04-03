@@ -51,7 +51,7 @@ rtm.on('message', (message) => {
       rtm.sendMessage(`War banlist:\n ${playersOverview.join('\n')}`, message.channel)
     })
   } else if (txt.indexOf('save the following tournament:') > -1)  {
-    royale.saveUrl(txt);
+    royale.saveUrl(message.text);
     rtm.sendMessage('Saved the tournament!', message.channel)
   } else if (txt.indexOf('get the current tournament') > -1) {
     var tournamentUrl = royale.getUrl()
