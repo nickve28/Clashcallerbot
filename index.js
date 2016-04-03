@@ -4,6 +4,7 @@ var config = require('config'),
     messageMap = require('./message-map'),
     donations = require('./donationstats'),
     banlist = require('./war-penalties.js'),
+    royale = require('./clashroyale.js')
     token = config.get('token')
 
 var rtm = new RtmClient(token, {logLevel: 'DEBUG'})
@@ -47,8 +48,14 @@ rtm.on('message', (message) => {
       var playersOverview = players.map( (player) => {
         return `Player ${player.name} has been banned until ${player.until} for reason: ${player.reason}`
       })
-      rtm.sendMessage(`War banlist:\n ${playersOverview.join('\n')}`, message.channel);
+      rtm.sendMessage(`War banlist:\n ${playersOverview.join('\n')}`, message.channel)
     })
+  } else if (txt.indexOf('save the following tournament:') > -1)  {
+    royale.saveUrl(txt);
+    rtm.sendMessage('Saved the tournament!', message.channel)
+  } else if (txt.indexOf('get the current tournament') > -1) {
+    var tournamentUrl = royale.getUrl()
+    rtm.sendMessage(`The current tournament can be found at ${tournamentUrl}`, message.channel)
   } else if (txt.match(/^!ban/)) {
     //just a draft for now
     var split = txt.split(';')
